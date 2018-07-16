@@ -20,5 +20,11 @@ int main() {
 
 
     rbtree->debugTraverse();
+
+
+    rbtree->insert(50);
+    rbtree->insert(45);
+
+    rbtree->debugTraverse();
     return 0;
 }
