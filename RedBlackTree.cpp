@@ -50,6 +50,10 @@ void RedBlackTree::rotate(Node *rt) {
 
 }
 
+/**
+ * insertion balance
+ * @param rt
+ */
 void RedBlackTree::pushUp(Node *rt) {
 
     if (rt == root) {
@@ -142,6 +146,9 @@ void RedBlackTree::findSuc(Node *rt, int value, Node *&ret) {
 
 void RedBlackTree::del(int value) {
     Node *delNode = doFind(root, value);
+    if (delNode == nullptr || delNode == nullNode) {
+        return;
+    }
     Node *replaceNode = nullptr;
     if (delNode->ch[0] != nullNode) {
         findPre(delNode, value, replaceNode);
@@ -152,23 +159,108 @@ void RedBlackTree::del(int value) {
     }
 
     std::swap(delNode->value, replaceNode->value);
-    replaceNode->debug();
-    Node *N = replaceNode;
-    //doDeletion(N);
 
-    if (N->color == RED) {
-        doDeletion(N);
+    puts("delete\n");
+    replaceNode->debug();
+
+    doDeletion(replaceNode);
+}
+
+/**
+ * delete balance
+ * @param rt
+ */
+void RedBlackTree::balance(Node *rt) {
+    if (rt == root) {
+        return;
+    }
+
+
+    Node *par = rt->parent;
+    bool c = par->isRightChild();
+    Node *brother = par->ch[c ^ 1];
+
+
+
+    /**
+     *
+     *    B                 (B)
+     *   / \                / \
+     * (B)  B     ----->   B   R
+     *     / \                / \
+     *    B   B              B   B
+     */
+    if (par->color == BLACK && brother->color == BLACK && brother->ch[0] == BLACK
+        && brother->ch[1] == BLACK) {
+        brother->color = RED;
+        balance(par);
+        return;
+    }
+
+
+
+    /**
+     *        B1            B3
+     *       / \   ---->   /
+     *    (B)2  R3        R1
+     *                    /
+     *                  (B)2
+     *
+     *   grantee that brother is not red in the following
+     */
+    if (brother->color == RED) {
+        std::swap(brother->color, par->color);
+        rotate(brother);
+    }
+
+
+
+    /**
+     *     R                 (B)
+     *    / \                / \
+     *  (B)  B    ----->    B   R
+     *      / \                / \
+     *     B   B              B   B
+     */
+    assert(brother->color == BLACK);
+    brother = par->ch[c ^ 1];
+    if (par->color == RED && brother->color == BLACK && brother->ch[0] == BLACK
+        && brother->ch[1] == BLACK) {
+        std::swap(par->color, brother->color);
+        balance(par);
         return;
     }
 
     /**
-     * at least one child is RED
+     *      X              X
+     *     / \            / \
+     *   (B)  B2   -->  (B)  B1
+     *       / \              \
+     *      R1  B3             R2
+     *                          \
+     *                           B3
      */
-    if (N->ch[0]->color | N->ch[1]->color) {
-        doDeletion(N);
-        return;
+
+    Node *left = brother->ch[0];
+    if (left->color == RED) {
+        std::swap(brother->color, left->color);
+        rotate(left);
     }
 
+
+    /**
+     *       X1                     X2
+     *      / \                    /  \
+     *    (B)  B2     ----->      B1   B4
+     *        / \                / \
+     *       X3  R4            (B)  X3
+     */
+    Node *right = brother->ch[1];
+    if (right->color == RED) {
+        std::swap(brother->color, par->color);
+        right->color = BLACK;
+        rotate(brother);
+    }
 
 }
 
@@ -178,21 +270,55 @@ void RedBlackTree::del(int value) {
  */
 void RedBlackTree::doDeletion(Node *rt) {
     /**
-     * the node must have at least one null node
+     * at least one child is null
      */
-    assert(rt->ch[0] == nullNode || rt->ch[1] == nullNode);
+    //assert(rt->ch[0] != nullNode && rt->ch[1] != nullNode);
 
-    Node *par = rt->parent;
-    bool c = rt->isRight();
-    bool isRightChild = (rt->ch[1] != nullNode);
-    Node *next = rt->ch[isRightChild];
-    next->parent = par;
-    if (par != nullNode) {
-        par->ch[c] = next;
-    }
+    /**
+     * case 1
+     * deleted node is root
+     */
     if (rt == root) {
-        root = next;
+        root = nullNode;
+        delete (rt);
+        return;
     }
+
+
+    /**
+     * real delete the node rt;
+     */
+    Node *par = rt->parent;
+    bool c = rt->isRightChild();
+    bool k = (rt->ch[1] != nullNode);
+    Node *next = rt->ch[k];
+    par->ch[c] = next;
+    if (next != nullNode) {
+        next->parent = par;
+    }
+    delete (rt);
+    /**
+     * case 2
+     * one child is red
+     */
+    if (next != nullNode && next->color == RED) {
+        next->color = BLACK;
+        return;
+    }
+
+    /**
+     * it's balanced ..... both child are null and itself must be black and father is red
+     */
+    if (next == nullNode && par->color == RED) {
+        par->color = BLACK;
+        return;
+    }
+
+    /**
+     * now we must balance the rb tree recursively
+     */
+    balance(par);
+
 }
 
 
@@ -207,6 +333,6 @@ void RedBlackTree::traverse(Node *rt) {
 
 void RedBlackTree::debugTraverse() {
 
-    printf("root %s %d\n\n", root->color ? "R" : "B", root->value);
+    printf("debug root %s %d\n\n", root->color ? "R" : "B", root->value);
     traverse(root);
 }

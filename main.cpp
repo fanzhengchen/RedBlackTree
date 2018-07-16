@@ -7,22 +7,18 @@ RedBlackTree *rbtree = new RedBlackTree();
 int main() {
 
     rbtree->insert(10);
-    rbtree->insert(20);
-    rbtree->insert(40);
-    rbtree->insert(50);
-
-    rbtree->insert(2);
-
-
+    rbtree->insert(120);
     rbtree->insert(98);
-    rbtree->insert(50);
-    rbtree->insert(23);
-
+    rbtree->insert(128);
+    rbtree->insert(12);
 
 
     rbtree->debugTraverse();
 
-    puts("deleting ---------");
-    rbtree->del(98);
+    rbtree->del(10);
+    rbtree->del(12);
+
+
+    rbtree->debugTraverse();
     return 0;
 }

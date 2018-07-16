@@ -23,15 +23,15 @@ class RedBlackTree {
         Node(int _value, bool _color) : value(_value), color(_color), size(0), cnt(0) {}
 
         void debug() {
-            printf("node %s %d\n", color ? "RED" : "BLACK", value);
+            printf("debug node %s %d  | ", color ? "RED" : "BLACK", value);
             if (parent != nullptr) {
-                printf("father %s %d side:%d\n", parent->color ? "RED" : "BLACK", parent->value,
+                printf("debug father %s %d side:%d\n\n", parent->color ? "RED" : "BLACK", parent->value,
                        this == parent->ch[1]);
             }
-            puts("------");
+
         }
 
-        bool isRight() {
+        bool isRightChild() {
             if (parent != nullptr) {
                 return (parent->ch[1] == this);
             }
@@ -96,6 +96,8 @@ private:
 
 
     Node *createNode(int value, bool color);
+
+    void balance(Node *rt);
 
 public:
 
