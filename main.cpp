@@ -15,10 +15,14 @@ int main() {
 
 
     rbtree->insert(98);
-   // rbtree->insert(50);
-   // rbtree->insert(23);
+    rbtree->insert(50);
+    rbtree->insert(23);
+
 
 
     rbtree->debugTraverse();
+
+    puts("deleting ---------");
+    rbtree->del(98);
     return 0;
 }

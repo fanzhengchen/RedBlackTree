@@ -100,6 +100,20 @@ void RedBlackTree::doInsert(Node *&rt, Node *par, int value) {
     pushUp(rt);
 }
 
+
+RedBlackTree::Node *RedBlackTree::doFind(Node *rt, int value) {
+    if (rt == nullNode) {
+        return nullNode;
+    }
+    if (rt->value == value) {
+        return rt;
+    }
+
+    bool c = rt->value < value;
+    return doFind(rt->ch[c], value);
+
+}
+
 void RedBlackTree::findPre(Node *rt, int value, Node *&ret) {
     if (rt == nullNode) {
         return;
@@ -123,7 +137,28 @@ void RedBlackTree::findSuc(Node *rt, int value, Node *&ret) {
     } else {
         findSuc(rt->ch[1], value, ret);
     }
+}
 
+void RedBlackTree::del(int value) {
+    Node *delNode = doFind(root, value);
+    Node *replaceNode = nullptr;
+    if (delNode->ch[0] != nullNode) {
+        findPre(delNode, value, replaceNode);
+    } else if (delNode->ch[1] != nullNode) {
+        findSuc(delNode, value, replaceNode);
+    } else {
+        replaceNode = delNode;
+    }
+
+    replaceNode->debug();
+    doDeletion(replaceNode);
+}
+
+void RedBlackTree::doDeletion(Node *rt) {
+    if (rt == root) {
+        root = nullNode;
+        return;
+    }
 }
 
 

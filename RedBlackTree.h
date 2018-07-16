@@ -71,6 +71,23 @@ private:
      */
     void traverse(Node *rt);
 
+
+    /**
+     * try to rebalance when delete node
+     * @param rt
+     */
+    void rebalance(Node *&rt);
+
+
+    /**
+     * real delete
+     * @param rt
+     */
+    void doDeletion(Node *rt);
+
+    Node *doFind(Node *rt,int value);
+
+
     Node *createNode(int value, bool color);
 
 public:
