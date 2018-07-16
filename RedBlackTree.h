@@ -30,6 +30,13 @@ class RedBlackTree {
             }
             puts("------");
         }
+
+        bool isRight() {
+            if (parent != nullptr) {
+                return (parent->ch[1] == this);
+            }
+            return false;
+        }
     };
 
 private:
@@ -85,7 +92,7 @@ private:
      */
     void doDeletion(Node *rt);
 
-    Node *doFind(Node *rt,int value);
+    Node *doFind(Node *rt, int value);
 
 
     Node *createNode(int value, bool color);

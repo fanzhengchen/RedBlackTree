@@ -4,6 +4,7 @@
 
 #include "RedBlackTree.h"
 #include <cstdio>
+#include <algorithm>
 
 class RedBlackTree;
 
@@ -150,14 +151,47 @@ void RedBlackTree::del(int value) {
         replaceNode = delNode;
     }
 
+    std::swap(delNode->value, replaceNode->value);
     replaceNode->debug();
-    doDeletion(replaceNode);
+    Node *N = replaceNode;
+    //doDeletion(N);
+
+    if (N->color == RED) {
+        doDeletion(N);
+        return;
+    }
+
+    /**
+     * at least one child is RED
+     */
+    if (N->ch[0]->color | N->ch[1]->color) {
+        doDeletion(N);
+        return;
+    }
+
+
 }
 
+/**
+ * denote the root of the subtree contains the deleted node is N
+ * @param rt
+ */
 void RedBlackTree::doDeletion(Node *rt) {
+    /**
+     * the node must have at least one null node
+     */
+    assert(rt->ch[0] == nullNode || rt->ch[1] == nullNode);
+
+    Node *par = rt->parent;
+    bool c = rt->isRight();
+    bool isRightChild = (rt->ch[1] != nullNode);
+    Node *next = rt->ch[isRightChild];
+    next->parent = par;
+    if (par != nullNode) {
+        par->ch[c] = next;
+    }
     if (rt == root) {
-        root = nullNode;
-        return;
+        root = next;
     }
 }
 
