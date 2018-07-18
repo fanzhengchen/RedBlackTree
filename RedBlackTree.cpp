@@ -190,8 +190,8 @@ void RedBlackTree::balance(Node *rt) {
      *     / \                / \
      *    B   B              B   B
      */
-    if (par->color == BLACK && brother->color == BLACK && brother->ch[0] == BLACK
-        && brother->ch[1] == BLACK) {
+    if (par->color == BLACK && brother->color == BLACK && brother->ch[c] == BLACK
+        && brother->ch[c ^ 1] == BLACK) {
         brother->color = RED;
         balance(par);
         return;
@@ -224,8 +224,8 @@ void RedBlackTree::balance(Node *rt) {
      */
     assert(brother->color == BLACK);
     brother = par->ch[c ^ 1];
-    if (par->color == RED && brother->color == BLACK && brother->ch[0] == BLACK
-        && brother->ch[1] == BLACK) {
+    if (par->color == RED && brother->color == BLACK && brother->ch[c] == BLACK
+        && brother->ch[c ^ 1] == BLACK) {
         std::swap(par->color, brother->color);
         balance(par);
         return;
@@ -241,7 +241,7 @@ void RedBlackTree::balance(Node *rt) {
      *                           B3
      */
 
-    Node *left = brother->ch[0];
+    Node *left = brother->ch[c];
     if (left->color == RED) {
         std::swap(brother->color, left->color);
         rotate(left);
@@ -255,7 +255,7 @@ void RedBlackTree::balance(Node *rt) {
      *        / \                / \
      *       X3  R4            (B)  X3
      */
-    Node *right = brother->ch[1];
+    Node *right = brother->ch[c^1];
     if (right->color == RED) {
         std::swap(brother->color, par->color);
         right->color = BLACK;
